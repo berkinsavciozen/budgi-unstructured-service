@@ -14,11 +14,15 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# 🔥 Download NLTK data at build time
+RUN python - <<EOF
+import nltk
+nltk.download("punkt")
+nltk.download("punkt_tab")
+EOF
+
 # Copy app
 COPY app ./app
 
-# Expose port (Render uses $PORT)
 ENV PORT=8000
-
-# Start server
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
